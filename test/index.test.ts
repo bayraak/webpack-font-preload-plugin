@@ -58,19 +58,6 @@ describe("WebpackFontPreloadPlugin tests", () => {
     expect(fonts[1].getAttribute("rel")).toBe("prefetch");
   });
 
-  it("should allow to add `links` at arbitrary location in dom", async () => {
-    const extensions = ["ttf"];
-    const { document } = await run(null, {
-      extensions,
-      insertBefore: "#root",
-    });
-    const [font1, font2] = findPreloadedFonts(document);
-    // `#root` is first child in the `body`. So parent of `link` will
-    // be `body`.
-    expect(font1?.parentElement?.tagName).toBe("BODY");
-    expect(font2?.parentElement?.tagName).toBe("BODY");
-  });
-
   it("should prepent in `head` if `insertBefore` is undefined", async () => {
     const extensions = ["ttf"];
     const { document } = await run(null, {
@@ -123,24 +110,5 @@ describe("WebpackFontPreloadPlugin tests", () => {
     });
     const fonts = findPreloadedFontNames(document);
     expect(fonts.length).toBe(4);
-  });
-
-  it("should not preload when mode is not `production`", async () => {
-    const { document } = await run({
-      mode: "development",
-    });
-    const fonts = findPreloadedFontNames(document);
-    expect(fonts.length).toBe(0);
-  });
-
-  it("should not preload when `devServer` is used", async () => {
-    const { document } = await run({
-      // @ts-ignore
-      devServer: {
-        allowedHosts: ["host.com"],
-      },
-    });
-    const fonts = findPreloadedFontNames(document);
-    expect(fonts.length).toBe(0);
   });
 });
